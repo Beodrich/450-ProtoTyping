@@ -4,61 +4,87 @@ using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
 {
-    private LineRenderer lineRenderer;
-    [SerializeField] private LayerMask whatIsGrapple;
-    [SerializeField] private float maxDistance;
+   private LineRenderer lineRenderer;
+   private Vector3 grapplePoint;
 
-     private Camera mainCamera;
+   private SpringJoint joint;
 
-     [SerializeField] private GameObject player;
+   private Vector3 currentGrapplePos;
 
-    private Vector3 hitPoint;
+   [SerializeField] private LayerMask whatIsGrapple;
 
-    private SpringJoint joint;
+   //tip of the gun
+   [SerializeField] private Transform gunTip, mainCamera,player;
 
-   [SerializeField] private float springForce=4.7f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        lineRenderer=GetComponent<LineRenderer>();
-        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
-        
-    }
+   [SerializeField] private float maxdistanceToPoint=100f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        //the funny button
-        if(Input.GetKeyDown(KeyCode.G)){
-            StartGrapple();
-        }
-        else{
-            StopGrapple();
-        }
-    }
-    private void StartGrapple(){
-        //cast a ray from the transform.postion to the object
-        RaycastHit hit;
-        if(Physics.Raycast(mainCamera.transform.position, transform.forward, out hit, maxDistance, whatIsGrapple)){
-            Debug.Log("can grapple");
-            hitPoint=hit.point;
-            joint=player.gameObject.AddComponent<SpringJoint>();
-            float distance = Vector3.Distance(this.transform.position, hitPoint);
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = this.transform.position;
-            joint.maxDistance= distance*0.8f;
-            joint.minDistance= distance *0.25f;
-            joint.spring= springForce;
+   [Header("Spring Variables")]
+
+    [Range(1f,100f)]
+   [SerializeField] private float springForce=15f;
+   
+    [Range(1f,100f)]
+
+    [SerializeField] private float damper=7f;
+    
+    [Range(1f,100f)]
+    [SerializeField] private float massConstant=10f;
+
+    [SerializeField] private float minDistance=0.25f;
+
+    [SerializeField] private float maxDistance=0.8f;
+
+private void Awake() {
+    lineRenderer=GetComponent<LineRenderer>();
+}
+       private void Update() {
+       if(Input.GetMouseButtonDown(0)){
+           StartGrapple();
+       }
+       else if(Input.GetMouseButtonUp(0)){
+           StopGrapple();
+       }
+   }
+   private void LateUpdate() {
+       DrawLine();
+   }
+    void StartGrapple(){
+        RaycastHit raycastHit;
+        Ray test= mainCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        if(Physics.Raycast(test,out raycastHit,maxdistanceToPoint ,whatIsGrapple)){
+            Debug.Log("hit");
+            grapplePoint= raycastHit.point;
+            joint= player.gameObject.AddComponent<SpringJoint>();
+            joint.autoConfigureConnectedAnchor=false;
+            joint.connectedAnchor=grapplePoint;
+            float distanceToPoint= Vector3.Distance(player.transform.position,grapplePoint);
+            
+            joint.maxDistance = distanceToPoint*maxDistance;
+            joint.minDistance = distanceToPoint*minDistance;
+
+            joint.spring=springForce;
+            joint.damper=damper;
+            joint.massScale=massConstant;
+            lineRenderer.positionCount=2;
+            currentGrapplePos=gunTip.position;
             
 
 
         }
-        else{
-            Debug.Log("can't grapple");
+    }
+    void StopGrapple(){
+        lineRenderer.positionCount=0;
+        Destroy(joint);
+    }
+    void DrawLine(){
+        if(!joint){
+            return;
         }
-    }
-    private void StopGrapple(){
+        currentGrapplePos= Vector3.Lerp(currentGrapplePos,grapplePoint,Time.deltaTime*0.8f);
+        lineRenderer.SetPosition(0,gunTip.position);
+        lineRenderer.SetPosition(1,currentGrapplePos);
 
     }
 
+    
 }
