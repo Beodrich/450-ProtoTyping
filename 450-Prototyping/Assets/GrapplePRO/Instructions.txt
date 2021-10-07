@@ -1,0 +1,31 @@
+--INSTRUCTIONS--
+
+
+SETTING UP A SCENE
+
+1. Create your scene
+2. Delete the main camera from the scene
+3. Locate either the first person or third person folder within prefabs
+4. Open that folder and drag all the contents into your scene (A player prefab and a canvas typically)
+5. Add something for the player to stand on, and a few additional objects tagged "CanGrapple"
+6. Should be good to go!
+
+
+
+CONTROLS
+
+1.  Uses standard WASD controls
+2.  SPACE to jump
+3.  LEFT MOUSE to shoot
+4.  RIGHT MOUSE to reel yourself or an object in (Depending on what you hooked)
+5.  pressing SPACE while swinging will keep your momentum and let go, while pressing LSHIFT while swinging will let go and remove all momentum
+
+
+!!NOTE!!
+
+Some of the script is based on things being named what they are (Such as the Player), and renaming certain things could break the function of this game unless it is worked around in the code 
+
+
+Hope you enjoy.  Please leave a nice review if you liked, and give me suggestions and feedback if you didn't.  Thanks!
+
+--GroovyGames2021@gmail.com--
