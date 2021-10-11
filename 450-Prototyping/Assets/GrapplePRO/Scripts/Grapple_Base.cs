@@ -66,7 +66,9 @@ public class Grapple_Base : MonoBehaviour {
 	void LateUpdate()
 	{
 
-		if(PlayerRigid.velocity.magnitude > 35)PlayerRigid.velocity = PlayerRigid.velocity.normalized * 35F;
+		if(PlayerRigid.velocity.magnitude > 35){
+		PlayerRigid.velocity = PlayerRigid.velocity.normalized * 35F;
+		}
 		VelocityReadout.text = Mathf.Round(PlayerRigid.velocity.magnitude).ToString();
 		DrawRope();
 
@@ -154,7 +156,6 @@ public class Grapple_Base : MonoBehaviour {
 
 		if(TheHook != null && Hit.point != null)
 		{
-		//	if(Vector3.Distance(TheHook.transform.position, Hit.point) < 15 && FalseHook == true && SourceHook.isPlaying == false)SourceHook.Play();
 
 
 			if(Vector3.Distance(TheHook.transform.position, Hit.point) < 2 && IsHooked == true && Test69 == false || 
@@ -162,7 +163,6 @@ public class Grapple_Base : MonoBehaviour {
 			{
 				Audio.clip = HitSuccess;
 				Audio.Play();
-			//	Debug.Log("Delicoous");
 				Test69 = true;
 			}
 
@@ -170,7 +170,6 @@ public class Grapple_Base : MonoBehaviour {
 			{
 
 
-				//FalseHook.GetComponent<MeshRenderer>().enabled = true;
 				IsGrappling = false;
 				IsHooked = false;
 				FalseHook = false;
@@ -183,11 +182,12 @@ public class Grapple_Base : MonoBehaviour {
 
 		}
 
-		if(Input.GetMouseButtonDown(0) && GrapplingCooldown == CooldownTimer)CheckForGrapple();
+		if(Input.GetMouseButtonDown(0) && GrapplingCooldown == CooldownTimer){
+			CheckForGrapple();
+			}
 
 		if(IsHooked || IsHookedToRigid)
 		{
-			//Debug.Log(Vector3.Distance(transform.position, Hit.point));
 			if(Input.GetKeyDown(KeyCode.LeftShift))
 			{
 				PlayerRigid.velocity = new Vector3(0,0,0);
@@ -232,7 +232,10 @@ public class Grapple_Base : MonoBehaviour {
 	{
 		
 
-		if(gameObject.GetComponent<SpringJoint>() == null)gameObject.AddComponent<SpringJoint>();
+		if(gameObject.GetComponent<SpringJoint>() == null){
+			gameObject.AddComponent<SpringJoint>();
+			
+			}
 
 		
 
@@ -244,12 +247,11 @@ public class Grapple_Base : MonoBehaviour {
 			PlayerSpring = GetComponent<SpringJoint>();
 			CurrentRopeLength = Vector3.Distance(transform.position, Hit.point);
 			PivotPoint = Hit.point;
-		/*transform.LookAt(Hit.point);*/
 			PlayerSpring.autoConfigureConnectedAnchor = false;
 			PlayerSpring.connectedAnchor = PivotPoint;
 			PlayerSpring.maxDistance = CurrentRopeLength * 0.8F;
 			PlayerSpring.minDistance = CurrentRopeLength * 0.25F;
-			PlayerSpring.spring = 4.5F;
+			PlayerSpring.spring = 2f;
 			PlayerSpring.damper = 7F;
 			PlayerSpring.massScale = 4.5F;
 
@@ -263,7 +265,9 @@ public class Grapple_Base : MonoBehaviour {
 		if(TheHook != null)
 		{
 			TheHook.transform.position = Vector3.Lerp(GameObject.Find("DaHook").transform.position, Hit.point, 0.1F);
-			if(Vector3.Distance(TheHook.transform.position, Hit.point) > 2)TheHook.transform.RotateAround(TheHook.transform.position, TheHook.transform.forward, 69);
+			if(Vector3.Distance(TheHook.transform.position, Hit.point) > 2){
+			TheHook.transform.RotateAround(TheHook.transform.position, TheHook.transform.forward, 69);
+			}
 		}
 
 	}
@@ -287,12 +291,16 @@ public class Grapple_Base : MonoBehaviour {
 		IsHookedToRigid = false;
 		Camera.main.transform.SetParent(transform);
 		Camera.main.transform.localPosition = CameraStandard;
-		if(ThirdPerson)Camera.main.transform.localRotation = new Quaternion(0,0,0,1);
+		if(ThirdPerson){
+		Camera.main.transform.localRotation = new Quaternion(0,0,0,1);
+		}
 		WindSoundFX.enabled = false;
 		SpeedFX.GetComponent<ParticleSystem>().Stop();
 		if(Pulling !=null)
 		{
-			if(Pulling.GetComponent<SpringJoint>() != null)Destroy(Pulling.GetComponent<SpringJoint>());
+			if(Pulling.GetComponent<SpringJoint>() != null){
+			Destroy(Pulling.GetComponent<SpringJoint>());
+			}
 			Pulling = null;
 		}
 
@@ -341,107 +349,107 @@ public class Grapple_Base : MonoBehaviour {
 
 	void CheckForGrapple()
 	{
-		if(!ThirdPerson)
-		{
-			if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out Hit, MaxGrappleRange) && GrapplingCooldown == CooldownTimer)
-			{
-				if(Hit.collider.tag == "CanGrapple" && Hit.collider.GetComponent<Rigidbody>() == null)
-				{
-					FakeHook.SetActive(false);
-					Test69 = false;
-					Audio.clip = LaunchSound;
-					Audio.Play();
-					HookedSettings();
-					if(GameObject.Find("DaHook") != null)
-					{
-						Destroy(GameObject.Find("DaHook"));
-					}
-					IsHookedToRigid = false;
-					GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
-					GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-					GrappleHook.name = "DaHook";
-					GrappleHook.transform.position = transform.position;
-					CooldownTimer = 0;
-					if(Pulling !=null)
-					{
-						if(Pulling.GetComponent<SpringJoint>() != null)Destroy(Pulling.GetComponent<SpringJoint>());
-						Pulling = null;
-					}
+		// if(!ThirdPerson)
+		// {
+		// 	if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out Hit, MaxGrappleRange) && GrapplingCooldown == CooldownTimer)
+		// 	{
+		// 		if(Hit.collider.tag == "CanGrapple" && Hit.collider.GetComponent<Rigidbody>() == null)
+		// 		{
+		// 			FakeHook.SetActive(false);
+		// 			Test69 = false;
+		// 			Audio.clip = LaunchSound;
+		// 			Audio.Play();
+		// 			HookedSettings();
+		// 			if(GameObject.Find("DaHook") != null)
+		// 			{
+		// 				Destroy(GameObject.Find("DaHook"));
+		// 			}
+		// 			IsHookedToRigid = false;
+		// 			GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
+		// 			GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+		// 			GrappleHook.name = "DaHook";
+		// 			GrappleHook.transform.position = transform.position;
+		// 			CooldownTimer = 0;
+		// 			if(Pulling !=null)
+		// 			{
+		// 				if(Pulling.GetComponent<SpringJoint>() != null)Destroy(Pulling.GetComponent<SpringJoint>());
+		// 				Pulling = null;
+		// 			}
 
-				}
-				else if(Hit.collider.tag != "CanGrapple")
-				{
-					FakeHook.SetActive(false);
-					Test69 = false;
-					IsHooked = false;
-					IsHookedToRigid = false;
-					if(GameObject.Find("DaHook") != null)
-					{
-						Destroy(GameObject.Find("DaHook"));
-					}
-					if(gameObject.GetComponent<SpringJoint>() != null)
-					{
-						Destroy(gameObject.GetComponent<SpringJoint>());
-					}
-					Audio.clip = LaunchSound;
-					Audio.Play();
-					FalseHook = true;
+		// 		}
+		// 		else if(Hit.collider.tag != "CanGrapple")
+		// 		{
+		// 			FakeHook.SetActive(false);
+		// 			Test69 = false;
+		// 			IsHooked = false;
+		// 			IsHookedToRigid = false;
+		// 			if(GameObject.Find("DaHook") != null)
+		// 			{
+		// 				Destroy(GameObject.Find("DaHook"));
+		// 			}
+		// 			if(gameObject.GetComponent<SpringJoint>() != null)
+		// 			{
+		// 				Destroy(gameObject.GetComponent<SpringJoint>());
+		// 			}
+		// 			Audio.clip = LaunchSound;
+		// 			Audio.Play();
+		// 			FalseHook = true;
 
-					GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
-					GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-					GrappleHook.name = "DaHook";
-					GrappleHook.transform.position = transform.position;
-					CooldownTimer = 0;
-					if(Pulling !=null)
-					{
-						if(Pulling.GetComponent<SpringJoint>() != null)Destroy(Pulling.GetComponent<SpringJoint>());
-						Pulling = null;
-					}
-				}
-				else if(Hit.collider.GetComponent<Rigidbody>() != null && Hit.collider.tag == "CanGrapple")
-				{
-					FakeHook.SetActive(false);
-					Test69 = false;
-					Audio.clip = LaunchSound;
-					Audio.Play();
-					if(GameObject.Find("DaHook") != null)
-					{
-						Destroy(GameObject.Find("DaHook"));
-					}
-					if(gameObject.GetComponent<SpringJoint>() != null)
-					{
-						Destroy(gameObject.GetComponent<SpringJoint>());
-					}
-					IsHookedToRigid = true;
-					IsHooked = false;
-					FalseHook = false;
-					GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
-					GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-					GrappleHook.name = "DaHook";
-					GrappleHook.transform.position = transform.position;
-					CooldownTimer = 0;
-					if(Hit.collider.gameObject.GetComponent<SpringJoint>() == null)Hit.collider.gameObject.AddComponent<SpringJoint>();
+		// 			GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
+		// 			GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+		// 			GrappleHook.name = "DaHook";
+		// 			GrappleHook.transform.position = transform.position;
+		// 			CooldownTimer = 0;
+		// 			if(Pulling !=null)
+		// 			{
+		// 				if(Pulling.GetComponent<SpringJoint>() != null)Destroy(Pulling.GetComponent<SpringJoint>());
+		// 				Pulling = null;
+		// 			}
+		// 		}
+		// 		else if(Hit.collider.GetComponent<Rigidbody>() != null && Hit.collider.tag == "CanGrapple")
+		// 		{
+		// 			FakeHook.SetActive(false);
+		// 			Test69 = false;
+		// 			Audio.clip = LaunchSound;
+		// 			Audio.Play();
+		// 			if(GameObject.Find("DaHook") != null)
+		// 			{
+		// 				Destroy(GameObject.Find("DaHook"));
+		// 			}
+		// 			if(gameObject.GetComponent<SpringJoint>() != null)
+		// 			{
+		// 				Destroy(gameObject.GetComponent<SpringJoint>());
+		// 			}
+		// 			IsHookedToRigid = true;
+		// 			IsHooked = false;
+		// 			FalseHook = false;
+		// 			GameObject GrappleHook = Instantiate(HookPrefab) as GameObject;
+		// 			GrappleHook.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+		// 			GrappleHook.name = "DaHook";
+		// 			GrappleHook.transform.position = transform.position;
+		// 			CooldownTimer = 0;
+		// 			if(Hit.collider.gameObject.GetComponent<SpringJoint>() == null)Hit.collider.gameObject.AddComponent<SpringJoint>();
 
 
 
-					CurrentRopeLength = Vector3.Distance(transform.position, Hit.point);
-					SpringJoint ObjjSpring  = Hit.collider.gameObject.GetComponent<SpringJoint>();
-					ObjjSpring.autoConfigureConnectedAnchor = false;
-					ObjjSpring.connectedAnchor = transform.position;
-					ObjjSpring.maxDistance = CurrentRopeLength * 1.25F;
-					ObjjSpring.minDistance = CurrentRopeLength * 0.25F;
-					ObjjSpring.spring = 4.5F;
-					ObjjSpring.damper = 7F;
-					ObjjSpring.massScale = 4.5F;
+		// 			CurrentRopeLength = Vector3.Distance(transform.position, Hit.point);
+		// 			SpringJoint ObjjSpring  = Hit.collider.gameObject.GetComponent<SpringJoint>();
+		// 			ObjjSpring.autoConfigureConnectedAnchor = false;
+		// 			ObjjSpring.connectedAnchor = transform.position;
+		// 			ObjjSpring.maxDistance = CurrentRopeLength * 1.25F;
+		// 			ObjjSpring.minDistance = CurrentRopeLength * 0.25F;
+		// 			ObjjSpring.spring = 4.5F;
+		// 			ObjjSpring.damper = 7F;
+		// 			ObjjSpring.massScale = 4.5F;
 
-					Pulling = Hit.collider.gameObject;
-					Pulling.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
+		// 			Pulling = Hit.collider.gameObject;
+		// 			Pulling.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 
-				}
+		// 		}
 
-			}
-		}
-		else if(ThirdPerson)
+		// 	}
+		// }
+		 if(ThirdPerson)
 		{
 			if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out Hit, MaxGrappleRange) && GrapplingCooldown == CooldownTimer)
 			{
@@ -520,7 +528,9 @@ public class Grapple_Base : MonoBehaviour {
 					GrappleHook.name = "DaHook";
 					GrappleHook.transform.position = transform.position;
 					CooldownTimer = 0;
-					if(Hit.collider.gameObject.GetComponent<SpringJoint>() == null)Hit.collider.gameObject.AddComponent<SpringJoint>();
+					if(Hit.collider.gameObject.GetComponent<SpringJoint>() == null){
+					Hit.collider.gameObject.AddComponent<SpringJoint>();
+					}
 
 
 
