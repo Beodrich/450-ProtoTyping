@@ -8,7 +8,7 @@ public class TP_Cam : MonoBehaviour {
 	public Vector3 CameraStandard;
 	public Transform CameraExpected;
 	public float CameraSmoother = 2;
-	Grapple_Base Grapple;
+	GrapplingHook Grapple;
 	public Image Cursor;
 	private float RotX;
 	private float RotY;
@@ -21,7 +21,7 @@ public class TP_Cam : MonoBehaviour {
 	void Start()
 	{
 		CameraStandard = Camera.main.transform.localPosition;
-		Grapple = GameObject.FindGameObjectWithTag("Player").GetComponent<Grapple_Base>();
+		Grapple = GameObject.FindGameObjectWithTag("Player").GetComponent<GrapplingHook>();
 		Player = GameObject.FindGameObjectWithTag("Player");
 	}
 
@@ -48,7 +48,7 @@ public class TP_Cam : MonoBehaviour {
 			Cursor.rectTransform.position = Input.mousePosition;
 		}
 	
-		if(!Grapple.IsGrappling)
+		if(!Grapple.getIsGrappling())
 		{
 			Rotate();
 			//Camera.main.transform.position = CameraStandard;
@@ -59,7 +59,7 @@ public class TP_Cam : MonoBehaviour {
 	void FixedUpdate()
 	{
 
-		if(Grapple.IsGrappling)
+		if(Grapple.getIsGrappling())
 		{
 			transform.SetParent(null);
 			Vector3 SmoothedCameraPos = Vector3.Lerp(Camera.main.transform.position, CameraExpected.position, SmoothingFactor * Time.deltaTime);
